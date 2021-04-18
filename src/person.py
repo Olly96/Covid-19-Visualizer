@@ -28,7 +28,7 @@ class Person:
         self.vaccination_status = False
         self.vaccine_efficacy = "None"
         self.mask_status = False
-        self.day_tracker = 0
+        self.update_prob_tracker = 0
         self.turtle = RawTurtle(canvas)
         self.initialize_turtle()
 

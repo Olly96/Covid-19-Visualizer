@@ -148,7 +148,7 @@ def random_movement(canvas):
         # wn.update()
         quarantine_contacts = []
         # sd_factor
-        movement.simulate_random_movement(population, 1440, sd_factor, infected, recovered, config)
+        movement.simulate_random_movement(population, infected, recovered, config)
         # if timesteps == config["time_conversion_factor"]:
         helpers.calculate_infections(population, susceptible, infected, config)
         susceptible = {}
