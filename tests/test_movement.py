@@ -207,6 +207,7 @@ class TestStringMethods(unittest.TestCase):
             "quarantine_location_y_limit": [-250, -210]
         }
         mov.update_infection_status(person_obj, infected, recovered, config)
+        print("lol",infected,recovered)
         self.assertEqual(infected, {})
         self.assertEqual(recovered, {23: True})
 

@@ -68,7 +68,6 @@ def update_infection_status(person, infected, recovered, config):
             recovered[person.id] = True
             del infected[person.id]
         else:
-            person.update_prob_tracker += 1
             if config["type"] == "SARS-COV-1":
                 helpers.update_probability_sars(person, config)
             else:

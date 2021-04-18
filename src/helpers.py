@@ -83,31 +83,33 @@ def update_contacts(population, contacts, config):
 
 
 def trace_contacts(population, infected, contacts, config):
-    index = 0
     for infected_person_id in infected.keys():
         infected_person = population[infected_person_id]
-        if True:
+        if infected_person.status == "I" or \
+            (infected_person.status == "AI" and random.random() < config["asymptotic_testing_probability"]): ##todo check asymptomatic
             if infected_person.infected_time > infected_person.incubation_period * config["time_conversion_factor"]:
-                infected_person.status = "QI"
-                x = random.randint(config["quarantine_location_x_limit"][0],
-                                   config["quarantine_location_x_limit"][1])
-                y = random.randint(config["quarantine_location_y_limit"][0],
-                                   config["quarantine_location_y_limit"][1])
-                infected_person.turtle.goto(x, y)
-                infected_person.x_limit = config["quarantine_location_x_limit"]
-                infected_person.y_limit = config["quarantine_location_y_limit"]
+                print("infecetd")
+                quarantine_person(infected_person, config)
                 for contact_id in contacts[infected_person_id].keys():
-                    infected_contact = population[contact_id]
-                    if infected_contact.infected_time > infected_contact.incubation_period * config["time_conversion_factor"]:
-                        infected_contact.status = "QI"
-                        x = random.randint(config["quarantine_location_x_limit"][0],
-                                           config["quarantine_location_x_limit"][1])
-                        y = random.randint(config["quarantine_location_y_limit"][0],
-                                           config["quarantine_location_y_limit"][1])
-                        infected_contact.turtle.goto(x, y)
-                        infected_contact.x_limit = config["quarantine_location_x_limit"]
-                        infected_contact.y_limit = config["quarantine_location_y_limit"]
+                    contact = population[contact_id]
+                    if contact.infected_time > contact.incubation_period * config["time_conversion_factor"]\
+                            or random.random() < config["quarantine_probability"]:
+                        quarantine_person(contact, config)
+                del contact[infected_person_id]
 
+
+def quarantine_person(person, config):
+    if person.status == "I" or person.status == "AI":
+        person.status = "QI"
+    else:
+        person.status = "QS"
+    x = random.randint(config["quarantine_location_x_limit"][0],
+                       config["quarantine_location_x_limit"][1])
+    y = random.randint(config["quarantine_location_y_limit"][0],
+                       config["quarantine_location_y_limit"][1])
+    person.turtle.goto(x, y)
+    person.x_limit = config["quarantine_location_x_limit"]
+    person.y_limit = config["quarantine_location_y_limit"]
 
 def infect_random_people(population, config):
     population_keys = []
@@ -127,20 +129,21 @@ def infect_random_people(population, config):
 
 
 def update_probability_sars(infected, config):
-
+    infected.update_prob_tracker += 1
     if infected.infection_probability == 0:
         if infected.infected_time >= infected.incubation_period * config["time_conversion_factor"]:
             infected.infection_probability = config["base_infection_probability"]
+            infected.update_prob_tracker = 0
 
     elif infected.update_prob_tracker >= config["time_conversion_factor"]:
         if infected.infected_time > config["peak_infection_sars"] * config["time_conversion_factor"]:
-            infected.infection_probability = config["daily_prob_increase_sars"] * infected.infection_probability
-        else:
             infected.infection_probability = config["daily_prob_decrease_sars"] * infected.infection_probability
+        else:
+            infected.infection_probability = config["daily_prob_increase_sars"] * infected.infection_probability
         infected.update_prob_tracker = 0
 
 def update_probability_covid(infected, config):
-
+    infected.update_prob_tracker += 1
     if infected.infection_probability == 0:
         # print("here", (infected.incubation_period - 2) * config["time_conversion_factor"], infected.infected_time)
         if infected.infected_time >= max((infected.incubation_period - 3), 0) * config["time_conversion_factor"]:
@@ -183,14 +186,14 @@ def get_effective_probability(infected_person, susceptible_person, distance, con
             effective_probability *= config["mask_prob_both_in_range"]
     return effective_probability
 
+
 def get_infection_status(infected_person, susceptible_person, config):
     distance = susceptible_person.turtle.distance(infected_person.turtle)
+    print("dist", distance)
     infection_status = False
     if distance < config["infection_distance"]:
         effective_probability = get_effective_probability(infected_person, susceptible_person, distance, config)
-        probVal = random.random()
-        # print("probval", probVal, effective_probability)
-        if probVal < effective_probability:
+        if random.random() < effective_probability:
             infection_status = True
     return infection_status
 

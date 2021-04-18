@@ -95,7 +95,7 @@ def random_movement(canvas):
         "local_distance": 5,
         "long_distance": 30,
         "sd_factor": 0.6,
-        "type": "SARS-COV-2",
+        "type": "SARS-COV-1",
         "infection_distance": 5,
         "mask_prob_infected_out_range": 0.2,
         "mask_prob_infected_in_range": 0.5,
@@ -358,7 +358,7 @@ def btnClicked():
     print("event")
 
 def print_value(val):
-    print(scale.get())
+    print("scscsc",scale.get(), val)
 
 btn = tk.Button(master = root, bg="white", fg="black",text = "Forward", command = btnClicked)
 scale = tk.Scale(orient='horizontal', from_=0, to=128)
@@ -373,6 +373,6 @@ btn.place(x=10, y=20)
 # c = ttk.Combobox(root, textvar=v, state="readonly", values=["SARS-CoV", "SARS-CoV-2"])
 # c.pack()
 # c.grid(column = 1, row = 25)
-random_movement(screen)
+# random_movement(screen)
 # central_hub_movement()
 root.mainloop()
