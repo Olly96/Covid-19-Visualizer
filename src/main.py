@@ -7,6 +7,9 @@ from tkinter import ttk
 from tkinter import HORIZONTAL
 import location
 from src import screens, movement, helpers
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
+NavigationToolbar2Tk)
 
 # wn = turtle.Screen()
 # wn.bgcolor('black')
@@ -17,6 +20,43 @@ from src import screens, movement, helpers
 #     print(person.id, person.turtle.xcor(), person.turtle.ycor())
 # location.testFunc(population=foo)
 # print(foo[2].status)
+population_percentage = {
+    'line1' : [228, 284, 365, 631, 477, 814, 1044, 1275],
+    'line2' : [228, 365, 631, 284, 814, 1044, 477, 1275],
+    'line3' : [228, 631, 814, 1044, 284, 477, 365, 1275]
+}
+time_list = [10, 20, 30, 40, 50, 60, 70, 80]
+r_factor = [3, 5, 1, 7, 10]
+
+def make_stackplot():
+    fig, ax = plt.subplots(figsize=(4,4))
+    ax.stackplot(time_list, population_percentage.values(),
+                 labels=population_percentage.keys())
+    ax.legend(loc='upper left')
+    ax.set_title('Covid-19 Visualizer')
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Population')
+
+    canvas_stackplot = FigureCanvasTkAgg(fig,
+                                         master=root)
+    canvas_stackplot.draw()
+
+    # placing the canvas on the Tkinter window
+    canvas_stackplot.get_tk_widget().pack(side=tk.LEFT)
+
+def make_lineplot():
+    fig, ax = plt.subplots(figsize=(4,4))
+    ax.plot(r_factor, ls = '-')
+    ax.legend(loc='upper left')
+    ax.set_title('Covid-19 Visualizer')
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Population')
+    canvas_stackplot = FigureCanvasTkAgg(fig,
+                                         master=root)
+    canvas_stackplot.draw()
+
+    # placing the canvas on the Tkinter window
+    canvas_stackplot.get_tk_widget().pack(side=tk.LEFT, fill=tk.X)
 community_coordinates = [[-280, -100, 120, 300], [-80, 100, 120, 300], [120, 300, 120, 300], [-280, -100, -80, 100], [-80, 100, -80, 100], [120, 300, -80, 100], [-280, -100, -280, -100], [-80, 100, -280, -100], [120, 300, -280, -100]]
 # foo = location.spawn_people_communities(100, community_coordinates)
 # for person in foo:
@@ -365,6 +405,12 @@ scale = tk.Scale(orient='horizontal', from_=0, to=128)
 scale.bind("<ButtonRelease-1>", print_value)
 scale.place(x=40, y=70)
 btn.place(x=10, y=20)
+'''For stackplot'''
+make_stackplot()
+
+'''For line plot'''
+make_lineplot()
+
 # ttk.Label(root, text = "Select a virus :",
 #         font = ( 10)).grid(column = 0,
 #         row = 15, padx = 10, pady = 25)
