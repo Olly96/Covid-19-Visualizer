@@ -10,6 +10,7 @@ from src import screens, movement, helpers
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
 NavigationToolbar2Tk)
+import matplotlib.gridspec as grd
 
 # wn = turtle.Screen()
 # wn.bgcolor('black')
@@ -29,34 +30,38 @@ time_list = [10, 20, 30, 40, 50, 60, 70, 80]
 r_factor = [3, 5, 1, 7, 10]
 
 def make_stackplot():
-    fig, ax = plt.subplots(figsize=(4,4))
+    fig, ax = plt.subplots(figsize=(3.9, 3.9))
     ax.stackplot(time_list, population_percentage.values(),
                  labels=population_percentage.keys())
     ax.legend(loc='upper left')
     ax.set_title('Covid-19 Visualizer')
     ax.set_xlabel('Time')
     ax.set_ylabel('Population')
-
+    fig.tight_layout()
     canvas_stackplot = FigureCanvasTkAgg(fig,
                                          master=root)
     canvas_stackplot.draw()
 
     # placing the canvas on the Tkinter window
-    canvas_stackplot.get_tk_widget().pack(side=tk.LEFT)
+    #canvas_stackplot.get_tk_widget().pack(side=tk.LEFT, fill=tk.X)
+    canvas_stackplot.get_tk_widget().grid(row=0, column=0, padx=(0, 0), pady=(0, 0))
 
 def make_lineplot():
-    fig, ax = plt.subplots(figsize=(4,4))
+    fig, ax = plt.subplots(figsize=(3.9, 3.9))
     ax.plot(r_factor, ls = '-')
-    ax.legend(loc='upper left')
-    ax.set_title('Covid-19 Visualizer')
-    ax.set_xlabel('Time')
-    ax.set_ylabel('Population')
-    canvas_stackplot = FigureCanvasTkAgg(fig,
+    #ax.legend(loc='upper left')
+    ax.set_title('R-Factor')
+    ax.set_xlabel('X-Axis Title')
+    ax.set_ylabel('Y-Axis Title')
+    fig.tight_layout()
+    canvas_lineplot = FigureCanvasTkAgg(fig,
                                          master=root)
-    canvas_stackplot.draw()
+    canvas_lineplot.draw()
 
     # placing the canvas on the Tkinter window
-    canvas_stackplot.get_tk_widget().pack(side=tk.LEFT, fill=tk.X)
+    #canvas_lineplot.get_tk_widget().pack(side=tk.LEFT, fill=tk.X)
+    canvas_lineplot.get_tk_widget().grid(row=0, column=1, padx=(0, 0), pady=(0, 0))
+
 community_coordinates = [[-280, -100, 120, 300], [-80, 100, 120, 300], [120, 300, 120, 300], [-280, -100, -80, 100], [-80, 100, -80, 100], [120, 300, -80, 100], [-280, -100, -280, -100], [-80, 100, -280, -100], [120, 300, -280, -100]]
 # foo = location.spawn_people_communities(100, community_coordinates)
 # for person in foo:
@@ -381,7 +386,7 @@ def on_field_change(index, value, op):
 root = tk.Tk()
 root.geometry('1500x1500')
 
-canvas = tk.Canvas(master = root, width = 700, height = 800)
+canvas = tk.Canvas(master = root, width = 650, height = 800)
 
 # canvas = turtle.ScrolledCanvas(root)
 # canvas.place(x=300, y=300)
@@ -397,14 +402,83 @@ def btnClicked():
     foo = False
     print("event")
 
-def print_value(val):
-    print(scale.get())
+def social_distancing_value(val):
+    print(scale_social_distancing.get())
+
+def population_value(val):
+    print(scale_population.get())
+
+def init_inf_per_value(val):
+    print(scale_init_inf_per.get())
+
+def vacc_stat_value(event):
+    print(scale_init_inf_per.get())
+
+def vacc_prob_value(val):
+    print(scale_vacc_prob.get())
+
+def vacc_eff_value(val):
+    print(scale_vacc_eff.get())
+
+def mask_status_value(val):
+    print(combo_mask_status.get())
+
+def mask_prob_value(val):
+    print(scale_mask_prob.get())
 
 btn = tk.Button(master = root, bg="white", fg="black",text = "Forward", command = btnClicked)
-scale = tk.Scale(orient='horizontal', from_=0, to=128)
-scale.bind("<ButtonRelease-1>", print_value)
-scale.place(x=40, y=70)
-btn.place(x=10, y=20)
+#Social Distancing
+scale_social_distancing = tk.Scale(orient='horizontal', from_=0, to=128)
+scale_social_distancing.bind("<ButtonRelease-1>", social_distancing_value)
+#Population
+scale_population = tk.Scale(orient='horizontal', from_=0, to=200)
+scale_population.bind("<ButtonRelease-1>", population_value)
+#Initial Infection Percentage
+scale_init_inf_per = tk.Scale(orient='horizontal', from_=1, to=100)
+scale_init_inf_per.bind("<ButtonRelease-1>", init_inf_per_value)
+#Vaccination Status
+combo_vacc_stat = ttk.Combobox(root, state="readonly",
+                            values=[
+                                    "True",
+                                    "False"])
+combo_vacc_stat.bind("<<ComboboxSelected>>", vacc_stat_value)
+#Vaccine Probability
+scale_vacc_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution = 0.1)
+scale_vacc_prob.bind("<ButtonRelease-1>", vacc_prob_value)
+#Vaccine Efficacy
+scale_vacc_eff = tk.Scale(orient='horizontal', from_=0, to=1, resolution = 0.1)
+scale_vacc_eff.bind("<ButtonRelease-1>", vacc_eff_value)
+#Mask Status
+combo_mask_status = ttk.Combobox(root, state="readonly",
+                            values=[
+                                    "True",
+                                    "False"])
+combo_mask_status.bind("<<ComboboxSelected>>", mask_status_value)
+#Mask Probability
+scale_mask_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution = 0.1)
+scale_mask_prob.bind("<ButtonRelease-1>", mask_prob_value)
+#scale.place(x=40, y=70)
+#btn.place(x=10, y=20)
+btn.grid(row=1, column=0)
+label1 = Label(root, text="Social Distancing Factor: ").grid(row=2, column=0)
+scale_social_distancing.grid(row=2, column=1)
+label2 = Label(root, text="Population: ").grid(row=3, column=0)
+scale_population.grid(row=3, column=1)
+label3 = Label(root, text="Initial Infection Percentage: ").grid(row=4, column=0)
+scale_init_inf_per.grid(row=4, column=1)
+label4 = Label(root, text="Vaccine Status: ").grid(row=5, column=0)
+combo_vacc_stat.grid(row=5, column=1)
+label5 = Label(root, text="Vaccine Probability: ").grid(row=6, column=0)
+scale_vacc_prob.grid(row=6, column=1)
+label6 = Label(root, text="Vaccine Efficiency: ").grid(row=7, column=0)
+scale_vacc_eff.grid(row=7, column=1)
+label7 = Label(root, text="Mask Status: ").grid(row=8, column=0)
+combo_mask_status.grid(row=8, column=1)
+label8 = Label(root, text="Mask Probability: ").grid(row=9, column=0)
+scale_mask_prob.grid(row=9, column=1)
+
+#gs = grd.GridSpec(2, 2, height_ratios=[1,10], width_ratios=[6,1], wspace=0.1)
+
 '''For stackplot'''
 make_stackplot()
 
