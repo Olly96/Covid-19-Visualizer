@@ -139,9 +139,9 @@ def random_movement(canvas):
         "infection_duration": 1440,
         "local_distance": 5,
         "long_distance": 30,
-        "sd_factor": 0.6,
+        "sd_factor": 0.7,
         "type": "SARS-COV-2",
-        "infection_distance": 5,
+        "infection_distance": 6,
         "mask_prob_infected_out_range": 0.2,
         "mask_prob_infected_in_range": 0.5,
         "mask_prob_susceptible": 0.5,
@@ -156,9 +156,11 @@ def random_movement(canvas):
         "peak_infection_sars": 10,
         "daily_prob_increase_sars": 1.1,
         "daily_prob_decrease_sars": 0.9,
-        "initial_infection_percentage": 2,
+        "initial_infection_percentage": 5,
         "asymptomatic_probability": 0.3,
         "testing_probability": 0.5,
+        "asymptotic_testing_probability": 0.7,
+        "quarantine_probability": 0.3,
         "contact_tracing_efficiency": 1,
         "quarantine_location_x_limit": [-300, -260],
         "quarantine_location_y_limit": [-250, -210]
@@ -189,7 +191,7 @@ def random_movement(canvas):
     while foo == True:
         time += 1
         timesteps += 1
-        screen.update()
+        canvas.update()
         # wn.update()
         quarantine_contacts = []
         # sd_factor
@@ -204,6 +206,176 @@ def random_movement(canvas):
         # iteration += 1
         # calculate_infections()
         # # print("infected length", len(infected))
+        helpers.calculate_R(time, population, susceptible, all_infections, victim_dict, final_R, config)
+        helpers.update_contacts(population, close_contacts, config)
+        # helpers.trace_contacts(population, infected, close_contacts, config)
+        total_infec = 0
+        # for key in all_infections.keys():
+        #     total_infec += all_infections[key]
+        # print("All infections lenght", total_infec)
+        # index += 1
+
+def communities_movement(canvas):
+    susceptible = {}
+    all_infections = {}
+    victim_dict = {}
+    infected = {}
+    recovered = {}
+    quarantined = {}
+    close_contacts = {}
+    config = {
+        "type": "SARS-COV-2",
+        "local_distance": 5,
+        "long_distance": 15,
+        "initial_infection_percentage": 5,
+        "infection_distance": 5,
+        "infection_duration": 1440,
+        "mask_prob_infected_out_range": 0.2,
+        "mask_prob_infected_in_range": 0.5,
+        "mask_prob_susceptible": 0.5,
+        "mask_prob_both_out_range": 0.02,
+        "mask_prob_both_in_range": 0.25,
+        "vaccine_probability": -1,
+        "vaccine_efficacy_range": [0.64, 0.67, 0.94, 0.95],
+        "mask_probability": -1,
+        "time_conversion_factor": 24,
+        "base_infection_probability": 0.5,
+        "daily_prob_change": 0.9,
+        "peak_infection_sars": 10,
+        "daily_prob_increase_sars": 1.1,
+        "daily_prob_decrease_sars": 0.9,
+        "asymptomatic_probability": 0.3,
+        "testing_probability": 0.5,
+        "contact_tracing_efficiency": 1,
+        "quarantine_location_x_limit": [-50, 50],
+        "quarantine_location_y_limit": [-370, -330],
+        "community_travel_probability": 0.20,
+        "visit_hub_probability": 0.1,
+        "community_coordinates": [[-280, -100, 120, 300], [-80, 100, 120, 300], [120, 300, 120, 300], [-280, -100, -80, 100], [-80, 100, -80, 100], [120, 300, -80, 100], [-280, -100, -280, -100], [-80, 100, -280, -100], [120, 300, -280, -100]],
+        "sd_factor": 0.1,
+        "asymptotic_testing_probability": 0.7,
+        "quarantine_probability": 0.3,
+}
+    susceptible = {}
+    infected = {}
+    recovered = {}
+    final_R= []
+    time = 0
+    draw_pen = turtle.RawTurtle(canvas)
+    screens.create_communities_screen(draw_pen)
+    if config["type"] == "SARS-COV-1":
+        incubation_period = random.randint(2, 7)
+    else:
+        incubation_period = 7
+    population = location.spawn_people_communities(400, config["community_coordinates"], incubation_period, canvas)
+    iteration = 0
+    for person_id in population.keys():
+        population[person_id].displacement_prob = random.random()
+        # population[person_id].is_infected = True
+    social_dist(100, population)
+    helpers.infect_random_people(population, config)
+    helpers.filter_infectious(population, susceptible, infected)
+    helpers.update_vaccination_and_mask_status(population, config)
+    timesteps = 0
+    while True:
+        time += 1
+        timesteps += 1
+        quarantine_contacts = []
+        # sd_factor
+        canvas.update()
+        movement.simulate_movement_communities(population, infected, recovered, config)
+        # if timesteps == config["time_conversion_factor"]:
+        helpers.calculate_infections(population, susceptible, infected, config)
+        susceptible = {}
+        infected = {}
+        helpers.filter_infectious(population, susceptible, infected)
+            # timesteps = 0
+
+        # iteration += 1
+        # calculate_infections()
+        # # print("infected length", len(infected))
+        helpers.calculate_R(time, population, susceptible, all_infections, victim_dict, final_R, config)
+        helpers.update_contacts(population, close_contacts, config)
+        # helpers.trace_contacts(population, infected, close_contacts, config)
+        total_infec = 0
+        # for key in all_infections.keys():
+        #     total_infec += all_infections[key]
+        # print("All infections lenght", total_infec)
+        # index += 1
+
+
+def central_hub_movement(canvas):
+    draw_pen = turtle.RawTurtle(canvas)
+    screens.create_central_hub_screen(draw_pen)
+    config = {
+        "type": "SARS-COV-2",
+        "local_distance": 5,
+        "long_distance": 15,
+        "initial_infection_percentage": 6,
+        "infection_distance": 5,
+        "infection_duration": 1440,
+        "mask_prob_infected_out_range": 0.2,
+        "mask_prob_infected_in_range": 0.5,
+        "mask_prob_susceptible": 0.5,
+        "mask_prob_both_out_range": 0.02,
+        "mask_prob_both_in_range": 0.25,
+        "vaccine_probability": -1,
+        "vaccine_efficacy_range": [0.64, 0.67, 0.94, 0.95],
+        "mask_probability": -1,
+        "time_conversion_factor": 24,
+        "base_infection_probability": 0.6,
+        "daily_prob_change": 0.9,
+        "peak_infection_sars": 10,
+        "daily_prob_increase_sars": 1.1,
+        "daily_prob_decrease_sars": 0.9,
+        "asymptomatic_probability": 0.3,
+        "testing_probability": 0.5,
+        "contact_tracing_efficiency": 1,
+        "quarantine_location_x_limit": [-50, 50],
+        "quarantine_location_y_limit": [-320, -280],
+        "community_travel_probability": 0.02,
+        "visit_hub_probability": 0.03,
+        "community_coordinates": [[-280, -100, 120, 300], [-80, 100, 120, 300], [120, 300, 120, 300], [-280, -100, -80, 100], [-80, 100, -80, 100], [120, 300, -80, 100], [-280, -100, -280, -100], [-80, 100, -280, -100], [120, 300, -280, -100]],
+        "sd_factor": 1,
+        "asymptotic_testing_probability": 0.7,
+        "quarantine_probability": 0.3,
+        "contact_tracing_efficiency": 1,
+}
+    susceptible = {}
+    all_infections = {}
+    victim_dict = {}
+    infected = {}
+    recovered = {}
+    quarantined = {}
+    close_contacts = {}
+    final_R= []
+    time = 0
+    if config["type"] == "SARS-COV-1":
+        incubation_period = random.randint(2, 7)
+    else:
+        incubation_period = 7
+    population = location.spawn_people_random(225, [-250, 250],[-250, 250], incubation_period, canvas)
+    iteration = 0
+    for person_id in population.keys():
+        population[person_id].displacement_prob = 1
+        # population[person_id].is_infected = True
+    social_dist(100, population)
+    helpers.infect_random_people(population, config)
+    helpers.filter_infectious(population, susceptible, infected)
+    helpers.update_vaccination_and_mask_status(population, config)
+    timesteps = 0
+    while True:
+        time += 1
+        timesteps += 1
+        quarantine_contacts = []
+        # sd_factor
+        canvas.update()
+        movement.simulate_movement_centralHub(population, infected, recovered, config)
+        # if timesteps == config["time_conversion_factor"]:
+        helpers.calculate_infections(population, susceptible, infected, config)
+        susceptible = {}
+        infected = {}
+        helpers.filter_infectious(population, susceptible, infected)
         helpers.calculate_R(time, population, susceptible, all_infections, victim_dict, final_R, config)
         helpers.update_contacts(population, close_contacts, config)
         helpers.trace_contacts(population, infected, close_contacts, config)
@@ -395,7 +567,6 @@ screen = turtle.TurtleScreen(canvas)
 screen.bgcolor('black')
 # screen.title('Epidemic simulator')
 screen.tracer(0)
-# screen.tracer(0)
 canvas.pack()
 def btnClicked():
     global  foo
@@ -493,6 +664,9 @@ make_lineplot()
 # c = ttk.Combobox(root, textvar=v, state="readonly", values=["SARS-CoV", "SARS-CoV-2"])
 # c.pack()
 # c.grid(column = 1, row = 25)
-random_movement(screen)
+# central_hub_movement(screen)
+communities_movement(screen)
+print("test")
+# random_movement(screen)
 # central_hub_movement()
 root.mainloop()

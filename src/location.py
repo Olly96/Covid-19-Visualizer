@@ -17,6 +17,6 @@ def spawn_people_communities(count, community_coordinates, incubation_period, ca
             x_limit = [community_coordinates[i][0], community_coordinates[i][1]]
             y_limit = [community_coordinates[i][2], community_coordinates[i][3]]
             person_obj = person.Person(j + i*population_count, x_limit, y_limit, incubation_period, canvas)
-            population[i] = person_obj
+            population[j + i*population_count] = person_obj
     return population
 
