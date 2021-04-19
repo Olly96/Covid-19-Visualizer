@@ -8,6 +8,7 @@ helperMock = Mock()
 sys.modules['random'] = randMock
 import  src.helpers as helpers
 
+
 class TestStringMethods(unittest.TestCase):
     def test_update_probability_sars(self):
         infected = Mock()
@@ -370,9 +371,56 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(helpers.quarantine_person.call_count, 3)
 
     def test_update_contacts(self):
+        population = {}
+        config = {
+            "infection_distance" : 5,
+            "contact_tracing_efficiency": 0.7
+        }
+        contacts = {
+            2: {
+                4: True
+            }
+        }
         person_obj_1 = Mock()
         person_obj_1.status = "I"
+        person_obj_1.turtle = Mock()
+        person_obj_1.turtle.distance = Mock(return_value= 3)
         contact_obj_1 = Mock()
         contact_obj_1.status = "S"
+        contact_obj_1.turtle = Mock()
+        contact_obj_1.turtle.distance = Mock(return_value=3)
         person_obj_2 = Mock()
         person_obj_2.status = "AI"
+        person_obj_2.turtle = Mock()
+        person_obj_2.turtle.distance = Mock(return_value=3)
+        population[0] = person_obj_1
+        population[1] = contact_obj_1
+        population[2] = person_obj_2
+        random_mock = Mock()
+        random_mock.side_effect = [0.6, 0.23, 0.4, 0.13]
+        randMock.random = random_mock
+        helpers.update_contacts(population, contacts, config)
+        self.assertEqual(contacts, {2: {4: True, 0: True, 1: True}, 0: {1: True, 2: True}})
+
+    def test_filter_infectious(self):
+        population = {}
+        susceptible = {10: True, 32: True}
+        infected = {25: True, 0: True}
+        person_obj_1 = Mock()
+        person_obj_1.status = "I"
+        person_obj_2 = Mock()
+        person_obj_2.status = "AI"
+        person_obj_3 = Mock()
+        person_obj_3.status = "S"
+        person_obj_4 = Mock()
+        person_obj_4.status = "QI"
+        person_obj_5 = Mock()
+        person_obj_5.status = "QS"
+        population[0] = person_obj_1
+        population[1] = person_obj_2
+        population[2] = person_obj_3
+        population[3] = person_obj_4
+        population[4] = person_obj_5
+        helpers.filter_infectious(population, susceptible, infected)
+        self.assertEqual(susceptible, {10: True, 32: True, 2: True})
+        self.assertEqual(infected, {25: True, 0: True, 1: True})

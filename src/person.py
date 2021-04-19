@@ -1,5 +1,5 @@
 
-from turtle import *
+import turtle
 import random
 
 class Person:
@@ -8,6 +8,7 @@ class Person:
         self.id = person_id
         self.is_ever_infected = False
         self.infected_by = "None"
+        self.is_quarantined = False
         self.infected_timestamp = "None" #doubtful
         self.displacement_prob = 1
         self.is_moving = False
@@ -29,7 +30,7 @@ class Person:
         self.vaccine_efficacy = "None"
         self.mask_status = False
         self.update_prob_tracker = 0
-        self.turtle = RawTurtle(canvas)
+        self.turtle = turtle.RawTurtle(canvas)
         self.initialize_turtle()
 
     def initialize_turtle(self):
@@ -37,7 +38,7 @@ class Person:
         self.turtle.shapesize(0.25)
         self.turtle.color('#4183C4')
         self.turtle.penup()
-        self.turtle.speed(1)
+        self.turtle.speed(0)
         x = random.randint(self.x_limit[0], self.x_limit[1])
         y = random.randint(self.y_limit[0], self.y_limit[1])
         self.turtle.setposition(x, y)
