@@ -1,11 +1,11 @@
 import random
 
-def calculate_R(time, population, susceptible, infected_dict, victim_dict, final_R, config):
+def calculate_R(time, population, susceptible, infected_dict, victim_dict, config, r_vals):
     if (time/config["time_conversion_factor"]) % 7 == 0 and len(susceptible.keys()) > 0:
-        # print("t/12", time/config["time_conversion_factor"])
-        print("t/12", time/config["time_conversion_factor"])
         x = []
         y = []
+        # print("t/12", time/config["time_conversion_factor"])
+        print("t/12", time/config["time_conversion_factor"])
         # graph_days = time/24 - 1
         # total_days = time/24
         graph_days = time/config["time_conversion_factor"] - 1
@@ -43,7 +43,10 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, final
             else:
                 y.append(total_edges/total_infections)
             win_right += interval
-        print(x, y)
+        print([x, y])
+        return [x, y]
+    else:
+        return r_vals
         # if(len(y)>0):
         #     final_R.append(y[len(y)-1])
         #     print(final_R)
@@ -57,6 +60,20 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, final
         # else:
         #     return 0
 
+def get_population_status_counts(population):
+    infected_count = 0
+    susceptible_count = 0
+    recovered_count = 0
+    for key in population.keys():
+        status = population[key].status
+        if status == "I" or status == "QI" or status == "AI":
+            infected_count += 1
+        elif status == "S" or status == "QS":
+            susceptible_count += 1
+        else:
+            recovered_count += 1
+    return  [susceptible_count, infected_count, recovered_count]
+
 
 def filter_infectious(population, susceptible, infected):
     for person_id in population.keys():
@@ -65,6 +82,7 @@ def filter_infectious(population, susceptible, infected):
             susceptible[person_id] = True
         elif person_status == "I" or person_status == "AI":
             infected[person_id] = True
+
 
 def update_contacts(population, contacts, config):
     for person_id in population.keys():
@@ -119,7 +137,8 @@ def infect_random_people(population, config):
     for key in population.keys():
         population_keys.append(key)
     population_keys_length = len(population_keys)
-    for i in range(int(config["initial_infection_percentage"]/100 * len(population))):
+
+    for i in range(int(int(config["initial_infection_percentage"])/100 * len(population))):
         index = random.randint(0, population_keys_length-1)
         person_id = population_keys[index]
         population[person_id].displacement_prob = 1
@@ -135,6 +154,7 @@ def update_probability_sars(infected, config):
     infected.update_prob_tracker += 1
     if infected.infection_probability == 0:
         if infected.infected_time >= infected.incubation_period * config["time_conversion_factor"]:
+            infected.turtle.color("red")
             infected.infection_probability = config["base_infection_probability"]
             infected.update_prob_tracker = 0
 
@@ -202,10 +222,6 @@ def get_infection_status(infected_person, susceptible_person, config):
 def calculate_infections(population, susceptible, infected, config):
     for susceptible_id in susceptible.keys():
         for infected_id in infected.keys():
-            # x_dist = abs(susceptible[i].turtleObj.xcor() - infected_per.turtleObj.xcor())
-            # y_dist = abs(susceptible[i].turtleObj.ycor() - j.turtleObj.ycor())
-            # dist_squared = x_dist * x_dist + y_dist * y_dist
-            # if config["type == "SARS-COV-1":
             infection_status = get_infection_status(population[infected_id], population[susceptible_id], config)
             if infection_status:
                 susceptible_person = population[susceptible_id]
@@ -216,20 +232,5 @@ def calculate_infections(population, susceptible, infected, config):
                     susceptible_person.status = "AI"
                 else:
                     susceptible_person.status = "I"
-                break
-            # else:
-            #     infection_status = get
-    # print("inf_count:", inf_count)
+                    break
 
-    # for i in range(len(susceptible)):
-    #     if i not in delete_indexes:
-    #         new_pop.append(susceptible[i])
-    #     else:
-    #         infected.append(susceptible[i])
-    # susceptible = new_pop
-
-    # display_string = "Infected:" + str(len(infected))
-    # foo.clear()
-    # foo.goto(0, 300)
-    # foo.write(display_string, True, align="center", font=("Arial", 25, "normal"))
-    # foo.hideturtle()

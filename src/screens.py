@@ -1,4 +1,3 @@
-import turtle
 
 def draw_square(start_coordinates, side_length, draw_pen):
     draw_pen.penup()

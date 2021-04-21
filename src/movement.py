@@ -1,15 +1,4 @@
 import random
-
-# def simulation_random_movement(population, infect_duration):
-#         for i in population:
-#             person = i.turtleObj
-#             person.setx(person.xcor() + person.dx)
-#             person.sety(person.ycor() + person.dy)
-#             if (i.status == "I"):
-#                 if (i.infected_time > infection_duration):
-#                     print("infected time", i.infected_time)
-#                     i.status = "R"
-#                     person.color("gray")
 from src import helpers
 
 def get_displacement_coordinates(person, distance):
@@ -52,7 +41,7 @@ def simulate_random_movement(population, infected, recovered, config):
             person = population[person_id]
             person_turtle = person.turtle
             # print("I am hete", person_id, person.displacement_prob)
-            if person.status != "QI" or person.status != "QS":
+            if not person.is_quarantined:
                 random_movement(person, config)
             update_infection_status(person, infected, recovered, config)
 
@@ -63,12 +52,13 @@ def update_infection_status(person, infected, recovered, config):
     person_turtle = person.turtle
     if person.is_ever_infected:
         person.infected_time += 1
-    if person.status == "I" or person.status == "AI":
+    if person.status == "I" or person.status == "AI" or person.status == "QI":
         if person.infected_time > config["infection_duration"]:
             person.status = "R"
             person_turtle.color("gray")
             recovered[person.id] = True
-            del infected[person.id]
+            if person.id in infected:
+                del infected[person.id]
         else:
             if config["type"] == "SARS-COV-1":
                 helpers.update_probability_sars(person, config)
@@ -89,8 +79,8 @@ def simulate_movement_communities(population, infected, recovered, config):
                     person.y_limit = [dest_community[2], dest_community[3]]
                     person_turtle.goto(x_dest, y_dest)
                 else:
-                    if person.status != "QI" or person.status != "QS":
-                        random_movement(person, config)
+                    # if person.status != "QI" or person.status != "QS":
+                    random_movement(person, config)
 
             update_infection_status(person, infected, recovered, config)
 
