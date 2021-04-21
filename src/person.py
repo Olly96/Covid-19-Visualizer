@@ -4,7 +4,7 @@ import random
 
 class Person:
 
-    def __init__(self, person_id, x_limit, y_limit, incubation_period, canvas):
+    def __init__(self, person_id, x_limit, y_limit, incubation_period, particle_size,  canvas):
         self.id = person_id
         self.is_ever_infected = False
         self.infected_by = "None"
@@ -24,6 +24,7 @@ class Person:
         self.infected_time = 0
         self.close_contacts = []
         self.last_location = [] #doubtful
+        self.particle_size = particle_size
         self.incubation_period = incubation_period
         self.infection_probability = 0
         self.vaccination_status = False
@@ -35,7 +36,7 @@ class Person:
 
     def initialize_turtle(self):
         self.turtle.shape('circle')
-        self.turtle.shapesize(0.25)
+        self.turtle.shapesize(self.particle_size)
         self.turtle.color('#4183C4')
         self.turtle.penup()
         self.turtle.speed(0)

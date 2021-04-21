@@ -14,6 +14,8 @@ parser = ConfigParser()
 GUI_CONFIG_PARAMS = {}
 UI_ELEMENTS_MAP = {}
 run_simulation = True
+screens = screens.screen()
+movement = movement.Movement()
 
 
 parser.read('mydev.ini')
@@ -157,11 +159,10 @@ def random_movement(canvas, config):
     r_vals = [[], []]
     make_stackplot(population_percentage, time_list)
     make_lineplot(r_vals[0], r_vals[1])
-    population = location.spawn_people_random(225, [-200, 200], [-200, 200], config["incubation_period"], canvas)
+    population = location.spawn_people_random(config, [-200, 200], [-200, 200], canvas)
     iteration = 0
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-        # population[person_id].is_infected = True
     social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
@@ -177,23 +178,19 @@ def random_movement(canvas, config):
         infected = {}
         helpers.filter_infectious(population, susceptible, infected)
         r_vals = helpers.calculate_R(time, population, susceptible, all_infections, victim_dict, config, r_vals)
-        helpers.update_contacts(population, close_contacts, config)
-        # helpers.trace_contacts(population, infected, close_contacts, config)
+        if config[constants.contact_tracing_status] == "True":
+            helpers.update_contacts(population, close_contacts, config)
+            helpers.trace_contacts(population, infected, close_contacts, config)
         counts = helpers.get_population_status_counts(population)
         if (time / config["time_conversion_factor"]) % 3 == 0:
             update_graphs(population_percentage, time_list, len(population), counts[0],
                           counts[1], counts[2], time / config["time_conversion_factor"], r_vals)
 
-def communities_movement(canvas, config):
-    print("-----------------------------------------------")
-    all_infections = {}
-    victim_dict = {}
-    quarantined = {}
+def  communities_movement(canvas, config):
     close_contacts = {}
     susceptible = {}
     infected = {}
     recovered = {}
-    final_R= []
     time = 0
     population_percentage = {
         'infected': [],
@@ -205,11 +202,10 @@ def communities_movement(canvas, config):
     make_stackplot(population_percentage, time_list)
     make_lineplot(r_vals[0], r_vals[1])
     print("spawing communiyirs")
-    population = location.spawn_people_communities(400, config["community_coordinates"], config["incubation_period"], canvas)
-    iteration = 0
+
+    population = location.spawn_people_communities(config, canvas)
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-        # population[person_id].is_infected = True
     social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
@@ -227,17 +223,14 @@ def communities_movement(canvas, config):
         susceptible = {}
         infected = {}
         helpers.filter_infectious(population, susceptible, infected)
-        helpers.update_contacts(population, close_contacts, config)
-        helpers.trace_contacts(population, infected, close_contacts, config)
+        if config[constants.contact_tracing_status] == "True":
+            helpers.update_contacts(population, close_contacts, config)
+            helpers.trace_contacts(population, infected, close_contacts, config)
         counts = helpers.get_population_status_counts(population)
         if (time / config["time_conversion_factor"]) % 3 == 0:
             update_graphs(population_percentage, time_list, len(population), counts[0],
                           counts[1], counts[2], time / config["time_conversion_factor"], r_vals)
-        total_infec = 0
-        # for key in all_infections.keys():
-        #     total_infec += all_infections[key]
-        # print("All infections lenght", total_infec)
-        # index += 1
+
 
 def central_hub_movement(canvas, config):
     susceptible = {}
@@ -247,11 +240,9 @@ def central_hub_movement(canvas, config):
     recovered = {}
     close_contacts = {}
     time = 0
-
-    population = location.spawn_people_random(225, [-250, 250],[-250, 250], config["incubation_period"], canvas)
+    population = location.spawn_people_random(config, [-250, 250],[-250, 250], canvas)
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-        # population[person_id].is_infected = True
     social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
@@ -263,7 +254,6 @@ def central_hub_movement(canvas, config):
         'recovered': []
     }
     time_list = []
-    # make_lineplot()
     r_vals = [[], []]
     make_stackplot(population_percentage, time_list)
     make_lineplot(r_vals[0], r_vals[1])
@@ -271,35 +261,41 @@ def central_hub_movement(canvas, config):
 
         time += 1
         timesteps += 1
-        quarantine_contacts = []
-        # sd_factor
+
         canvas.update()
         movement.simulate_movement_centralHub(population, infected, recovered, config)
-        # if timesteps == config["time_conversion_factor"]:
         helpers.calculate_infections(population, susceptible, infected, config)
         susceptible = {}
         infected = {}
         helpers.filter_infectious(population, susceptible, infected)
         r_vals = helpers.calculate_R(time, population, susceptible, all_infections, victim_dict, config, r_vals)
-        helpers.update_contacts(population, close_contacts, config)
+        if config[constants.contact_tracing_status] == "True":
+            helpers.update_contacts(population, close_contacts, config)
+            helpers.trace_contacts(population, infected, close_contacts, config)
         counts = helpers.get_population_status_counts(population)
-        if (time / config["time_conversion_factor"]) % 3 == 0:
+        if (time / config["time_conversion_factor"]) % 1 == 0:
             update_graphs(population_percentage, time_list, len(population), counts[0],
                           counts[1], counts[2], time / config["time_conversion_factor"], r_vals)
 
 def simulate_random_movement(canvas, config):
     draw_pen = turtle.RawTurtle(canvas)
     screens.create_random_mov_screen(draw_pen)
+    if config[constants.contact_tracing_status] == "True":
+        screens.create_quarantine_location(draw_pen)
     random_movement(canvas, config)
 
 def simulate_communities_movement(canvas, config):
     draw_pen = turtle.RawTurtle(canvas)
     screens.create_communities_screen(draw_pen)
+    if config[constants.contact_tracing_status] == "True":
+        screens.create_quarantine_location(draw_pen)
     communities_movement(canvas, config)
 
 def simulate_central_hub_movement(canvas, config):
     draw_pen = turtle.RawTurtle(canvas)
     screens.create_central_hub_screen(draw_pen)
+    if config[constants.contact_tracing_status] == "True":
+        screens.create_quarantine_location(draw_pen)
     central_hub_movement(canvas, config)
 
 def build_gui():
@@ -315,9 +311,11 @@ def build_gui():
 
 def runSimulation():
     # global canvas
+    global run_simulation
     run_simulation = True
     canvas = build_gui()
     config = get_config_obj()
+    print("confg", config)
     if config[constants.environment_options_menu] == "Open":
         simulate_random_movement(canvas, config)
     elif config[constants.environment_options_menu] == "Central-hub":
@@ -326,16 +324,23 @@ def runSimulation():
         simulate_communities_movement(canvas, config)
 
 def control_changed(*val):
-    run_simulation = False
+    # run_simulation = False
     # runSimulation(canvas)
     print("hello world", *val)
 
-def btnClicked():
+def start_button_clicked():
+    global run_simulation
     run_simulation = False
     runSimulation()
 
+def stop_button_clicked():
+    global run_simulation
+    run_simulation = False
+
 def generate_ui_controls():
-    btn = tk.Button(master=root, bg="white", fg="black", text="Start", command=btnClicked)
+    startBtn = tk.Button(master=root, bg="white", fg="black", text="Start", command=start_button_clicked)
+    stopBtn = tk.Button(master=root, bg="white", fg="black", text="Stop", command=stop_button_clicked)
+
     virus_options = ["SARS-COV-1", "SARS-COV-2"]
     optvar_1 = StringVar(root)
     optvar_1.set(virus_options[1])
@@ -346,19 +351,28 @@ def generate_ui_controls():
     optvar_2 = StringVar(root)
     optvar_2.set(enviroment_options[0])
     enviroment_options_menu = OptionMenu(root, optvar_2, *enviroment_options)
-
     UI_ELEMENTS_MAP[constants.environment_options_menu] = optvar_2
-    optvar_2.trace("w", control_changed)
+
+    contact_tracing_options = ["True", "False"]
+    optvar_3 = StringVar(root)
+    optvar_3.set(contact_tracing_options[1])
+    contact_tracing_options_menu = OptionMenu(root, optvar_3, *contact_tracing_options)
+    UI_ELEMENTS_MAP[constants.contact_tracing_status] = optvar_3
+
     scale_social_distancing = tk.Scale(orient='horizontal', from_=0, to=1)
+    scale_social_distancing.set(0.6)
     scale_social_distancing.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.social_distancing] = scale_social_distancing
     scale_population = tk.Scale(orient='horizontal', from_=100, to=800)
+    scale_population.set(200)
     scale_population.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.population] = scale_population
     scale_init_inf_per = tk.Scale(orient='horizontal', from_=1, to=100)
+    scale_init_inf_per.set(6)
     scale_init_inf_per.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.initial_infection_percentage] = scale_init_inf_per
     scale_vacc_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.)
+    scale_vacc_prob.set(0)
     scale_vacc_prob.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.vaccine_probability] = scale_vacc_prob
     scale_vacc_eff = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
@@ -367,27 +381,36 @@ def generate_ui_controls():
     scale_mask_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
     scale_mask_prob.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.mask_probability] = scale_mask_prob
+    scale_particle_size = tk.Scale(orient='horizontal', from_=0.05, to=0.3, resolution=0.05)
+    scale_particle_size.bind("<ButtonRelease-1>", control_changed())
+    UI_ELEMENTS_MAP[constants.particle_size] = scale_particle_size
 
     # scale.place(x=40, y=70)
     # btn.place(x=10, y=20)
     # btn.grid(row=1, column=0)
     Label(root, text="Virus Options: ").grid(row=3, column=0, sticky= "E" ,padx=0)
     virus_options_menu.grid(row=3, column=1, sticky="W",padx = 0)
-    Label(root, text="Environment Options: ").grid(row=3, column=2, sticky= "E" ,padx=0)
-    enviroment_options_menu.grid(row=3, column=3, sticky="W",padx = 0)
-    Label(root, text="Social Distancing Factor: ").grid(row=5, column=0)
-    scale_social_distancing.grid(row=5, column=1)
-    Label(root, text="Population: ").grid(row=6, column=0)
-    scale_population.grid(row=6, column=1)
-    Label(root, text="Initial Infection Percentage: ").grid(row=7, column=0)
-    scale_init_inf_per.grid(row=7, column=1)
-    Label(root, text="Vaccine Probability: ").grid(row=8, column=0)
-    scale_vacc_prob.grid(row=8, column=1)
-    Label(root, text="Vaccine Efficiency: ").grid(row=9, column=0)
-    scale_vacc_eff.grid(row=9, column=1)
-    Label(root, text="Mask Probability: ").grid(row=10, column=0)
-    scale_mask_prob.grid(row=9, column=1)
-    btn.grid(row=12, column=0)
+    Label(root, text="Environment Options: ").grid(row=4, column=0, sticky= "E" ,padx=0)
+    enviroment_options_menu.grid(row=4, column=1, sticky="W",padx = 0)
+    Label(root, text="Social Distancing Factor: ").grid(row=5, column=0, sticky= "E" ,padx=0)
+    scale_social_distancing.grid(row=5, column=1, sticky="W",padx = 0)
+    Label(root, text="Population: ").grid(row=6, column=0, sticky= "E" ,padx=0)
+    scale_population.grid(row=6, column=1, sticky="W",padx = 0)
+    Label(root, text="Initial Infection Percentage: ").grid(row=7, column=0, sticky= "E" ,padx=0)
+    scale_init_inf_per.grid(row=7, column=1, sticky="W",padx = 0)
+    Label(root, text="Vaccine Probability: ").grid(row=8, column=0, sticky= "E" ,padx=0)
+    scale_vacc_prob.grid(row=8, column=1, sticky="W",padx = 0)
+    Label(root, text="Vaccine Efficiency: ").grid(row=9, column=0, sticky= "E" ,padx=0)
+    scale_vacc_eff.grid(row=9, column=1, sticky="W",padx = 0)
+    Label(root, text="Mask Probability: ").grid(row=10, column=0, sticky= "E" ,padx=0)
+    scale_mask_prob.grid(row=10, column=1, sticky="W",padx = 0)
+    Label(root, text="Particle Size: ").grid(row=11, column=0, sticky= "E" ,padx=0)
+    scale_particle_size.grid(row=11, column=1, sticky = "W", padx=0)
+    Label(root, text="Contact Tracing: ").grid(row=12, column=0, sticky= "E" ,padx=0)
+    contact_tracing_options_menu.grid(row=12, column=1, sticky = "W", padx=0)
+    startBtn.grid(row=13, column=0, sticky= "E" ,padx=0, pady=10)
+    stopBtn.grid(row=13, column=1, sticky= "W" ,padx=0, pady=10)
+
 
 # gs = grd.GridSpec(2, 2, height_ratios=[1,10], width_ratios=[6,1], wspace=0.1)
 
@@ -412,7 +435,7 @@ def get_config_obj():
     for key in UI_ELEMENTS_MAP.keys():
         value = UI_ELEMENTS_MAP[key].get()
         conf[key] = value
-    environment_config  = parser._sections[conf[constants.virus_options_menu]]
+    environment_config = parser._sections[conf[constants.virus_options_menu]]
     for key in environment_config:
         env_value = environment_config[key]
         if isfloat(env_value):

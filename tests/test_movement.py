@@ -7,12 +7,13 @@ randMock = Mock()
 helperMock = Mock()
 sys.modules['random'] = randMock
 sys.modules['helpers'] = helperMock
-import  src.movement as mov
+import  src.movement as movement
 
 
 class TestStringMethods(unittest.TestCase):
     # Standard scenario to generate displacement coordinate within given range
     def test_get_displacement_coordinates_1(self):
+        mov = movement.Movement()
         uniformMock = Mock()
         uniformMock.side_effect = [150, 200]
         randMock.uniform = uniformMock
@@ -30,6 +31,7 @@ class TestStringMethods(unittest.TestCase):
 
     # Scenario where x_bound_2 and y_bound_1 are greater than x_limit and y_limit
     def test_get_displacement_coordinates_2(self):
+            mov = movement.Movement()
             uniformMock = Mock()
             uniformMock.side_effect = [493.8, 106.5]
             randMock.uniform = uniformMock
@@ -47,6 +49,7 @@ class TestStringMethods(unittest.TestCase):
             # Scenario where x_bound_2 and y_bound_1 are greater than x_limit and y_limit
     # Scenario where x_bound_1 and y_bound_2 are greater than x_limit and y_limit
     def test_get_displacement_coordinates_3(self):
+        mov = movement.Movement()
         uniformMock = Mock()
         uniformMock.side_effect = [104.5, 495]
         randMock.uniform = uniformMock
@@ -63,6 +66,7 @@ class TestStringMethods(unittest.TestCase):
         randMock.uniform.assert_any_call(494, 500)
 
     def test_random_movement(self):
+        mov = movement.Movement()
         population = {}
         infected = {}
         recovered = {}
@@ -120,6 +124,7 @@ class TestStringMethods(unittest.TestCase):
         # self.assertEqual(population[0].)
 
     def test_simulate_random_movement(self):
+        mov = movement.Movement()
         population = {}
         infected = {}
         recovered = {}
@@ -158,23 +163,26 @@ class TestStringMethods(unittest.TestCase):
             person_obj.turtle = turtle_obj
             if i % 2 == 0:
                 person_obj.displacement_prob = 0.8
+                person_obj.is_quarantined = False
             else:
                 person_obj.displacement_prob = 0.1
+                person_obj.is_quarantined = True
             population[i] = person_obj
         mov.update_infection_status = Mock()
         mov.random_movement = Mock()
         mov.simulate_random_movement(population, infected, recovered, config)
-        self.assertEqual(mov.random_movement.call_count, 3)
+        self.assertEqual(mov.random_movement.call_count, 2)
         self.assertEqual(mov.update_infection_status.call_count, 3)
 
     def test_update_infections(self):
+        mov = movement.Movement()
         person_obj = Mock()
         turtle_obj = Mock()
         turtle_obj.color = Mock()
         person_obj.turtle = turtle_obj
         person_obj.status = "I"
         person_obj.is_ever_infected = True
-        person_obj.infected_time = 1440
+        person_obj.infected_time = 1445
         person_obj.id = 23
         infected = {23: True}
         recovered = {}
@@ -206,6 +214,7 @@ class TestStringMethods(unittest.TestCase):
             "quarantine_location_x_limit": [-300, -260],
             "quarantine_location_y_limit": [-250, -210]
         }
+        print("lol",infected,recovered)
         mov.update_infection_status(person_obj, infected, recovered, config)
         print("lol",infected,recovered)
         self.assertEqual(infected, {})
@@ -242,6 +251,7 @@ class TestStringMethods(unittest.TestCase):
         print(infected, recovered, person_obj_3)
 
     def test_simulate_movement_communities(self):
+        mov = movement.Movement()
         population = {}
         infected = {}
         recovered = {}
@@ -277,10 +287,12 @@ class TestStringMethods(unittest.TestCase):
             "community_coordinates": [[-280, -100, 120, 300], [-80, 100, 120, 300], [120, 300, 120, 300], [-280, -100, -80, 100], [-80, 100, -80, 100], [120, 300, -80, 100], [-280, -100, -280, -100], [-80, 100, -280, -100], [120, 300, -280, -100]]
         }
         person_obj_1 = Mock()
+        person_obj_1.is_quarantined = False
         turtle_obj_1 = Mock()
         turtle_obj_1.goto = Mock()
         person_obj_1.turtle = turtle_obj_1
         person_obj_2 = Mock()
+        person_obj_2.is_quarantined = False
         turtle_obj_2 = Mock()
         turtle_obj_2.goto = Mock()
         person_obj_2.turtle = turtle_obj_2
@@ -302,6 +314,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(mov.update_infection_status.call_count, 2)
 
     def test_simulate_movement_centralHub(self):
+        mov = movement.Movement()
         population = {}
         infected = {}
         recovered = {}
@@ -340,16 +353,19 @@ class TestStringMethods(unittest.TestCase):
         }
         person_obj_1 = Mock()
         person_obj_1.is_central_hub = False
+        person_obj_1.is_quarantined = False
         turtle_obj_1 = Mock()
         turtle_obj_1.goto = Mock()
         person_obj_1.turtle = turtle_obj_1
         person_obj_2 = Mock()
         person_obj_2.is_central_hub = True
+        person_obj_2.is_quarantined = False
         turtle_obj_2 = Mock()
         turtle_obj_2.goto = Mock()
         person_obj_2.turtle = turtle_obj_2
         person_obj_3 = Mock()
         person_obj_3.is_central_hub = False
+        person_obj_3.is_quarantined = False
         turtle_obj_3 = Mock()
         turtle_obj_3.goto = Mock()
         person_obj_3.turtle = turtle_obj_3
