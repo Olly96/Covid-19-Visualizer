@@ -4,10 +4,6 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, confi
     if (time/config["time_conversion_factor"]) % 7 == 0 and len(susceptible.keys()) > 0:
         x = []
         y = []
-        # print("t/12", time/config["time_conversion_factor"])
-        print("t/12", time/config["time_conversion_factor"])
-        # graph_days = time/24 - 1
-        # total_days = time/24
         graph_days = time/config["time_conversion_factor"] - 1
         total_days = time/config["time_conversion_factor"]
         interval = 7
@@ -32,8 +28,6 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, confi
                 person = population[local_person_id]
                 if person.is_ever_infected:
                     when_infected = total_days - person.infected_time/config["time_conversion_factor"]
-                            # when_infected = total_days - person.infected_time
-                            # when_infected = person.infected_timestamp / 24
                     if when_infected >= win_left and when_infected < win_right:
                         total_infections += 1
                         if person.id in infected_dict.keys():

@@ -17,7 +17,7 @@ config['SARS-COV-1'] = {
         # "vaccine_efficacy_range": [0.64, 0.67, 0.94, 0.95],
         # "mask_probability": -1,
         "time_conversion_factor": 24,
-        "base_infection_probability": 0.25,
+        "base_infection_probability": 0.19,
         "daily_prob_change": 0.9,
         "peak_infection_sars": 12,
         "daily_prob_increase_sars": 1.05,
@@ -51,14 +51,14 @@ config['SARS-COV-2'] = {
         # "vaccine_efficacy_range": [0.64, 0.67, 0.94, 0.95],
         # "mask_probability": -1,
         "time_conversion_factor": 24,
-        "base_infection_probability": 0.75,
+        "base_infection_probability": 0.19,
         "daily_prob_change": 0.95,
         "peak_infection_sars": 10,
         "daily_prob_increase_sars": 1.1,
         "daily_prob_decrease_sars": 0.9,
         "asymptomatic_probability": 0.3,
         "testing_probability": 0.5,
-        "contact_tracing_efficiency": 0.75,
+        "contact_tracing_efficiency": 0.8,
         # "quarantine_location_x_limit": [-50, 50],
         # "quarantine_location_y_limit": [-370, -330],
         "community_travel_probability": 0.20,
@@ -67,7 +67,7 @@ config['SARS-COV-2'] = {
         # "sd_factor": 0.1,
         "asymptotic_testing_probability": 0.5,
         "quarantine_probability": 0.25,
-        "incubation_period": 6
+        "incubation_period": 7
 
 }
 

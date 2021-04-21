@@ -76,58 +76,57 @@ def garbage():
     # movement.testFunc(population=foo)
     # print("hi",len(foo))
 
-def social_dist(sd_factor, population):
-    spaces_x = []
-    spaces_y = []
-    coordinates = []
-
-    for i in range(-200, 201):
-        if i % int(400 / math.sqrt(
-                len(
-                    population))) == 0:  # this is a calculation I created to make sure that more coordinates are created with a larger population
-            # the weird population value, using the square of an odd number is part of this calculation.
-            spaces_x.append(i)
-            spaces_y.append(i)
-
-    for x in spaces_x:
-        for y in spaces_y:
-            coordinate = [x, y]
-            coordinates.append(coordinate)
-    min_dist = 0
-    closest_dist = []
-
-    for i in range(len(population)):
-
-        # if population[i].xcor() > -250:
-            # this line above is only for quarantaine mode
-
-            if random.randint(0, 100) in range(0, sd_factor + 1):
-
-                for c in coordinates:
-
-                    xdist = population[i].turtle.xcor() - c[0]
-                    ydist = population[i].turtle.ycor() - c[1]
-                    dist_squared = xdist * xdist + ydist * ydist
-                    # dist_squared is the square of the distance to the coordinate in coordinates
-                    if len(closest_dist) == 0:
-                        closest_dist = c
-                        min_dist = dist_squared
-                    elif dist_squared < min_dist:
-                        closest_dist = c
-                        min_dist = dist_squared
-                    # It looks for the closest coordinate in coordinates to the ball.
-
-                if len(coordinates) > 0:
-                    try:
-                        coordinates.remove(closest_dist)
-                        # this removes the coordinate that is already chosen by a ball from coordinates to make sure every coordinate gets only used once.
-                    except:
-                        coordinates.remove(coordinates[0])
-
-                    # population[i].center_coordinates = [closest_dist[0], closest_dist[1]]
-                    population[i].turtle.goto(closest_dist[0], closest_dist[1])
-
-                closest_dist.clear()
+# def social_dist(sd_factor, population):
+#     spaces_x = []
+#     spaces_y = []
+#     coordinates = []
+# 
+#     for i in range(-200, 201):
+#         if i % int(400 / math.sqrt(
+#                 len(
+#                     population))) == 0:
+#             spaces_x.append(i)
+#             spaces_y.append(i)
+# 
+#     for x in spaces_x:
+#         for y in spaces_y:
+#             coordinate = [x, y]
+#             coordinates.append(coordinate)
+#     min_dist = 0
+#     closest_dist = []
+# 
+#     for i in range(len(population)):
+# 
+#         # if population[i].xcor() > -250:
+#             # this line above is only for quarantaine mode
+# 
+#             if random.randint(0, 100) in range(0, sd_factor + 1):
+# 
+#                 for c in coordinates:
+# 
+#                     xdist = population[i].turtle.xcor() - c[0]
+#                     ydist = population[i].turtle.ycor() - c[1]
+#                     dist_squared = xdist * xdist + ydist * ydist
+#                     # dist_squared is the square of the distance to the coordinate in coordinates
+#                     if len(closest_dist) == 0:
+#                         closest_dist = c
+#                         min_dist = dist_squared
+#                     elif dist_squared < min_dist:
+#                         closest_dist = c
+#                         min_dist = dist_squared
+#                     # It looks for the closest coordinate in coordinates to the ball.
+# 
+#                 if len(coordinates) > 0:
+#                     try:
+#                         coordinates.remove(closest_dist)
+#                         # this removes the coordinate that is already chosen by a ball from coordinates to make sure every coordinate gets only used once.
+#                     except:
+#                         coordinates.remove(coordinates[0])
+# 
+#                     # population[i].center_coordinates = [closest_dist[0], closest_dist[1]]
+#                     population[i].turtle.goto(closest_dist[0], closest_dist[1])
+# 
+#                 closest_dist.clear()
 
 
 def update_graphs(population_percentage, time_list, population_len, susceptible_len,
@@ -164,7 +163,7 @@ def random_movement(canvas, config):
     iteration = 0
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-    social_dist(100, population)
+    # social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
     helpers.update_vaccination_and_mask_status(population, config)
@@ -209,7 +208,7 @@ def  communities_movement(canvas, config):
     population = location.spawn_people_communities(config, canvas)
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-    social_dist(100, population)
+    # social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
     helpers.update_vaccination_and_mask_status(population, config)
@@ -247,7 +246,7 @@ def central_hub_movement(canvas, config):
     population = location.spawn_people_random(config, [-250, 250],[-250, 250], canvas)
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-    social_dist(100, population)
+    # social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
     helpers.update_vaccination_and_mask_status(population, config)
@@ -383,7 +382,7 @@ def generate_ui_controls():
     scale_mask_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
     scale_mask_prob.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.mask_probability] = scale_mask_prob
-    scale_particle_size = tk.Scale(orient='horizontal', from_=0.1, to=0.3, resolution=0.05)
+    scale_particle_size = tk.Scale(orient='horizontal', from_=0.05, to=0.3, resolution=0.05)
     scale_particle_size.set(0.15)
     scale_particle_size.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.particle_size] = scale_particle_size
