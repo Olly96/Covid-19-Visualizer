@@ -34,7 +34,6 @@ def make_stackplot(stack_percentage_obj, tl):
     canvas_stackplot.get_tk_widget().grid(row=0, column=0, padx=(0, 0), pady=(0, 0))
 
 def make_lineplot(time, r_values):
-    print(time, r_values)
     fig, ax = plt.subplots(figsize=(3.9, 3.9))
     ax.plot(time, r_values)
     ax.set_title('R-Factor')
@@ -210,7 +209,6 @@ def simulate_central_hub_movement(canvas, config):
     central_hub_movement(canvas, config)
 
 def build_gui():
-    print("In am called too")
     root.geometry('1500x1500')
     canvas = tk.Canvas(master=root, width=650, height=800)
     canvas.place(x=800, y=0)
@@ -226,7 +224,6 @@ def runSimulation():
     run_simulation = True
     canvas = build_gui()
     config = get_config_obj()
-    print("confg", config)
     if config[constants.environment_options_menu] == "Open":
         simulate_random_movement(canvas, config)
     elif config[constants.environment_options_menu] == "Central-hub":
@@ -363,7 +360,6 @@ def get_config_obj():
 # communities_movement(screen)
 generate_ui_controls()
 runSimulation()
-print("test")
 # random_movement(screen)
 # central_hub_movement(screen)
 root.mainloop()
