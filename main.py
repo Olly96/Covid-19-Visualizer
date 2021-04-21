@@ -17,22 +17,13 @@ UI_ELEMENTS_MAP = {}
 run_simulation = True
 screens = screens.screen()
 movement = movement.Movement()
+parser.read('dev.ini')
 
-
-parser.read('mydev.ini')
-population_percentage = {
-    'line1' : [228, 284, 365, 631, 477, 814, 1044, 1275],
-    'line2' : [228, 365, 631, 284, 814, 1044, 477, 1275],
-    'line3' : [228, 631, 814, 1044, 284, 477, 365, 1275]
-}
-time_list = [10, 20, 30, 40, 50, 60, 70, 80]
-r_factor = [3, 5, 1, 7, 10]
 
 def make_stackplot(stack_percentage_obj, tl):
     fig, ax = plt.subplots(figsize=(3.9, 3.9))
     ax.stackplot(tl, stack_percentage_obj.values(),
                  labels=stack_percentage_obj.keys())
-    plot = ax
     ax.legend(loc='upper left')
     ax.set_title('SIR Stack plot')
     ax.set_xlabel('Time')
@@ -42,12 +33,10 @@ def make_stackplot(stack_percentage_obj, tl):
                                          master=root)
     canvas_stackplot.get_tk_widget().grid(row=0, column=0, padx=(0, 0), pady=(0, 0))
 
-
 def make_lineplot(time, r_values):
     print(time, r_values)
     fig, ax = plt.subplots(figsize=(3.9, 3.9))
     ax.plot(time, r_values)
-    #ax.legend(loc='upper left')
     ax.set_title('R-Factor')
     ax.set_xlabel('Time(Days)')
     ax.set_ylabel('Rt')
@@ -56,78 +45,7 @@ def make_lineplot(time, r_values):
                                          master=root)
     canvas_lineplot.draw()
 
-    # placing the canvas on the Tkinter window
-    #canvas_lineplot.get_tk_widget().pack(side=tk.LEFT, fill=tk.X)
     canvas_lineplot.get_tk_widget().grid(row=0, column=1, padx=(0, 0), pady=(0, 0))
-
-community_coordinates = [[-280, -100, 120, 300], [-80, 100, 120, 300], [120, 300, 120, 300], [-280, -100, -80, 100], [-80, 100, -80, 100], [120, 300, -80, 100], [-280, -100, -280, -100], [-80, 100, -280, -100], [120, 300, -280, -100]]
-# foo = location.spawn_people_communities(100, community_coordinates)
-# for person in foo:
-#     print(person.id, person.turtle.xcor(), person.turtle.ycor())
-# screens.create_random_mov_screen(start_coordinates=[-250, -250], side_length=500)
-def garbage():
-    draw_pen = turtle.Turtle()
-    screens.create_central_hub_screen(draw_pen)
-    draw_pen.clear()
-    screens.create_communities_screen(draw_pen)
-    # screens.create_quarantine_location([-300, -250], 40, draw_pen)
-    screens.create_quarantine_location([-340, -300], 30, draw_pen)
-    # print(len(foo))
-    # movement.testFunc(population=foo)
-    # print("hi",len(foo))
-
-def social_dist(sd_factor, population):
-    spaces_x = []
-    spaces_y = []
-    coordinates = []
-
-    for i in range(-200, 201):
-        if i % int(400 / math.sqrt(
-                len(
-                    population))) == 0:  # this is a calculation I created to make sure that more coordinates are created with a larger population
-            # the weird population value, using the square of an odd number is part of this calculation.
-            spaces_x.append(i)
-            spaces_y.append(i)
-
-    for x in spaces_x:
-        for y in spaces_y:
-            coordinate = [x, y]
-            coordinates.append(coordinate)
-    min_dist = 0
-    closest_dist = []
-
-    for i in range(len(population)):
-
-        # if population[i].xcor() > -250:
-            # this line above is only for quarantaine mode
-
-            if random.randint(0, 100) in range(0, sd_factor + 1):
-
-                for c in coordinates:
-
-                    xdist = population[i].turtle.xcor() - c[0]
-                    ydist = population[i].turtle.ycor() - c[1]
-                    dist_squared = xdist * xdist + ydist * ydist
-                    # dist_squared is the square of the distance to the coordinate in coordinates
-                    if len(closest_dist) == 0:
-                        closest_dist = c
-                        min_dist = dist_squared
-                    elif dist_squared < min_dist:
-                        closest_dist = c
-                        min_dist = dist_squared
-                    # It looks for the closest coordinate in coordinates to the ball.
-
-                if len(coordinates) > 0:
-                    try:
-                        coordinates.remove(closest_dist)
-                        # this removes the coordinate that is already chosen by a ball from coordinates to make sure every coordinate gets only used once.
-                    except:
-                        coordinates.remove(coordinates[0])
-
-                    # population[i].center_coordinates = [closest_dist[0], closest_dist[1]]
-                    population[i].turtle.goto(closest_dist[0], closest_dist[1])
-
-                closest_dist.clear()
 
 
 def update_graphs(population_percentage, time_list, population_len, susceptible_len,
@@ -147,9 +65,7 @@ def random_movement(canvas, config):
     victim_dict = {}
     infected = {}
     recovered = {}
-    quarantined = {}
     close_contacts = {}
-    final_R= []
     time = 0
     population_percentage = {
         'infected': [],
@@ -160,11 +76,9 @@ def random_movement(canvas, config):
     r_vals = [[], []]
     make_stackplot(population_percentage, time_list)
     make_lineplot(r_vals[0], r_vals[1])
-    population = location.spawn_people_random(config, [-200, 200], [-200, 200], canvas)
-    iteration = 0
+    population = location.spawn_people_random(config, [-250, 250], [-250, 250], canvas)
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-    social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
     helpers.update_vaccination_and_mask_status(population, config)
@@ -187,7 +101,8 @@ def random_movement(canvas, config):
             update_graphs(population_percentage, time_list, len(population), counts[0],
                           counts[1], counts[2], time / config["time_conversion_factor"], r_vals)
 
-def  communities_movement(canvas, config):
+
+def communities_movement(canvas, config):
     close_contacts = {}
     susceptible = {}
     infected = {}
@@ -204,12 +119,9 @@ def  communities_movement(canvas, config):
     r_vals = [[], []]
     make_stackplot(population_percentage, time_list)
     make_lineplot(r_vals[0], r_vals[1])
-    print("spawing communiyirs")
-
     population = location.spawn_people_communities(config, canvas)
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-    social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
     helpers.update_vaccination_and_mask_status(population, config)
@@ -217,11 +129,8 @@ def  communities_movement(canvas, config):
     while run_simulation == True:
         time += 1
         timesteps += 1
-        quarantine_contacts = []
-        # sd_factor
         canvas.update()
         movement.simulate_movement_communities(population, infected, recovered, config)
-        # if timesteps == config["time_conversion_factor"]:
         helpers.calculate_infections(population, susceptible, infected, config)
         susceptible = {}
         infected = {}
@@ -247,7 +156,6 @@ def central_hub_movement(canvas, config):
     population = location.spawn_people_random(config, [-250, 250],[-250, 250], canvas)
     for person_id in population.keys():
         population[person_id].displacement_prob = random.random()
-    social_dist(100, population)
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
     helpers.update_vaccination_and_mask_status(population, config)
@@ -377,13 +285,13 @@ def generate_ui_controls():
     scale_vacc_prob.set(0)
     scale_vacc_prob.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.vaccine_probability] = scale_vacc_prob
-    scale_vacc_eff = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
+    scale_vacc_eff = tk.Scale(orient='horizontal', from_=0.65, to=1, resolution=0.01)
     scale_vacc_eff.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.vaccine_efficacy] = scale_vacc_eff
     scale_mask_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
     scale_mask_prob.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.mask_probability] = scale_mask_prob
-    scale_particle_size = tk.Scale(orient='horizontal', from_=0.1, to=0.3, resolution=0.05)
+    scale_particle_size = tk.Scale(orient='horizontal', from_=0.05, to=0.3, resolution=0.05)
     scale_particle_size.set(0.15)
     scale_particle_size.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.particle_size] = scale_particle_size

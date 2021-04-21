@@ -4,10 +4,6 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, confi
     if (time/config["time_conversion_factor"]) % 7 == 0 and len(susceptible.keys()) > 0:
         x = []
         y = []
-        # print("t/12", time/config["time_conversion_factor"])
-        print("t/12", time/config["time_conversion_factor"])
-        # graph_days = time/24 - 1
-        # total_days = time/24
         graph_days = time/config["time_conversion_factor"] - 1
         total_days = time/config["time_conversion_factor"]
         interval = 7
@@ -15,7 +11,6 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, confi
         for person_id in population.keys():
             person = population[person_id]
             if person.is_ever_infected and person.id not in victim_dict.keys():
-                # print(person.status)
                 if person.infected_by in infected_dict.keys():
                     infected_dict[person.infected_by] += 1
                 elif person.infected_by != "None":
@@ -32,8 +27,6 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, confi
                 person = population[local_person_id]
                 if person.is_ever_infected:
                     when_infected = total_days - person.infected_time/config["time_conversion_factor"]
-                            # when_infected = total_days - person.infected_time
-                            # when_infected = person.infected_timestamp / 24
                     if when_infected >= win_left and when_infected < win_right:
                         total_infections += 1
                         if person.id in infected_dict.keys():
@@ -47,18 +40,6 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, confi
         return [x, y]
     else:
         return r_vals
-        # if(len(y)>0):
-        #     final_R.append(y[len(y)-1])
-        #     print(final_R)
-
-
-        # for key in infected_dict.keys():
-        #     total_edges += infected_dict[key]
-        # if len(infected_dict.keys()) != 0:
-        #     print("Infected", total_infections, " ", total_edges/len(infected_dict.keys()))
-        #     return total_edges/len(infected_dict.keys())
-        # else:
-        #     return 0
 
 def get_population_status_counts(population):
     infected_count = 0
@@ -177,16 +158,13 @@ def update_probability_covid(infected, config):
         infected.infection_probability = config["daily_prob_change"] * infected.infection_probability
         infected.update_prob_tracker = 0
 
-    # print("infected infectionprob", infected.infection_probability)
 
 def update_vaccination_and_mask_status(population, config ):
     for person_id in population.keys():
         if random.random() < config["vaccine_probability"]:
-            # print("vaccine probabilit True")
             population[person_id].vaccination_status = True
             population[person_id].vaccine_efficacy = config[constants.vaccine_efficacy]
         if random.random() < config["mask_probability"]:
-            # print("mask probability")
             population[person_id].mask_status = True
 
 def get_effective_probability(infected_person, susceptible_person, distance, config):
