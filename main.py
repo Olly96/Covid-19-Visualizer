@@ -377,7 +377,7 @@ def generate_ui_controls():
     scale_vacc_prob.set(0)
     scale_vacc_prob.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.vaccine_probability] = scale_vacc_prob
-    scale_vacc_eff = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
+    scale_vacc_eff = tk.Scale(orient='horizontal', from_=0.65, to=1, resolution=0.1)
     scale_vacc_eff.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.vaccine_efficacy] = scale_vacc_eff
     scale_mask_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
