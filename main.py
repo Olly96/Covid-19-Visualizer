@@ -10,6 +10,7 @@ from src import constants
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,NavigationToolbar2Tk)
 root = tk.Tk()
+root.title('Covid 19 Visualizer')
 parser = ConfigParser()
 GUI_CONFIG_PARAMS = {}
 UI_ELEMENTS_MAP = {}
@@ -33,9 +34,9 @@ def make_stackplot(stack_percentage_obj, tl):
                  labels=stack_percentage_obj.keys())
     plot = ax
     ax.legend(loc='upper left')
-    ax.set_title('Covid-19 Visualizer')
+    ax.set_title('SIR Stack plot')
     ax.set_xlabel('Time')
-    ax.set_ylabel('Population')
+    ax.set_ylabel('Percentage')
     fig.tight_layout()
     canvas_stackplot = FigureCanvasTkAgg(fig,
                                          master=root)
@@ -48,8 +49,8 @@ def make_lineplot(time, r_values):
     ax.plot(time, r_values)
     #ax.legend(loc='upper left')
     ax.set_title('R-Factor')
-    ax.set_xlabel('X-Axis Title')
-    ax.set_ylabel('Y-Axis Title')
+    ax.set_xlabel('Time(Days)')
+    ax.set_ylabel('Rt')
     fig.tight_layout()
     canvas_lineplot = FigureCanvasTkAgg(fig,
                                          master=root)
@@ -191,6 +192,8 @@ def  communities_movement(canvas, config):
     susceptible = {}
     infected = {}
     recovered = {}
+    all_infections = {}
+    victim_dict = {}
     time = 0
     population_percentage = {
         'infected': [],
@@ -223,6 +226,7 @@ def  communities_movement(canvas, config):
         susceptible = {}
         infected = {}
         helpers.filter_infectious(population, susceptible, infected)
+        r_vals = helpers.calculate_R(time, population, susceptible, all_infections, victim_dict, config, r_vals)
         if config[constants.contact_tracing_status] == "True":
             helpers.update_contacts(population, close_contacts, config)
             helpers.trace_contacts(population, infected, close_contacts, config)
@@ -247,7 +251,6 @@ def central_hub_movement(canvas, config):
     helpers.infect_random_people(population, config)
     helpers.filter_infectious(population, susceptible, infected)
     helpers.update_vaccination_and_mask_status(population, config)
-    timesteps = 0
     population_percentage = {
         'infected': [],
         'susceptible': [],
@@ -260,7 +263,6 @@ def central_hub_movement(canvas, config):
     while run_simulation == True:
 
         time += 1
-        timesteps += 1
 
         canvas.update()
         movement.simulate_movement_centralHub(population, infected, recovered, config)
@@ -269,6 +271,7 @@ def central_hub_movement(canvas, config):
         infected = {}
         helpers.filter_infectious(population, susceptible, infected)
         r_vals = helpers.calculate_R(time, population, susceptible, all_infections, victim_dict, config, r_vals)
+
         if config[constants.contact_tracing_status] == "True":
             helpers.update_contacts(population, close_contacts, config)
             helpers.trace_contacts(population, infected, close_contacts, config)
@@ -359,8 +362,7 @@ def generate_ui_controls():
     contact_tracing_options_menu = OptionMenu(root, optvar_3, *contact_tracing_options)
     UI_ELEMENTS_MAP[constants.contact_tracing_status] = optvar_3
 
-    scale_social_distancing = tk.Scale(orient='horizontal', from_=0, to=1)
-    scale_social_distancing.set(0.6)
+    scale_social_distancing = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
     scale_social_distancing.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.social_distancing] = scale_social_distancing
     scale_population = tk.Scale(orient='horizontal', from_=100, to=800)
@@ -381,7 +383,8 @@ def generate_ui_controls():
     scale_mask_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
     scale_mask_prob.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.mask_probability] = scale_mask_prob
-    scale_particle_size = tk.Scale(orient='horizontal', from_=0.05, to=0.3, resolution=0.05)
+    scale_particle_size = tk.Scale(orient='horizontal', from_=0.1, to=0.3, resolution=0.05)
+    scale_particle_size.set(0.15)
     scale_particle_size.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.particle_size] = scale_particle_size
 
