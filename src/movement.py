@@ -18,10 +18,8 @@ class Movement:
             y_bound_2 = person.y_limit[1]
         elif y_bound_1 < person.y_limit[0]:
             y_bound_1 = person.y_limit[0]
-        # print("xbound_1", x_bound_1, "x_bound_2", x_bound_2, "y_bound_1", y_bound_1, "y_bound_2", y_bound_2)
         x_dest = random.uniform(x_bound_1, x_bound_2)
         y_dest = random.uniform(y_bound_1, y_bound_2)
-        # print("x_dest", x_dest)
         return [x_dest, y_dest]
 
 
@@ -31,7 +29,6 @@ class Movement:
         if random.random() < person.displacement_prob:
             if random.random() < config["sd_factor"]:
                 disp_coordinates = self.get_displacement_coordinates(person, config["local_distance"])
-                # print("move randomly", disp_coordinates)
                 person_turtle.goto(disp_coordinates[0], disp_coordinates[1])
             else:
                 disp_coordinates = self.get_displacement_coordinates(person, config["long_distance"])
@@ -42,7 +39,6 @@ class Movement:
             for person_id in population.keys():
                 person = population[person_id]
                 person_turtle = person.turtle
-                # print("I am hete", person_id, person.displacement_prob)
                 if not person.is_quarantined:
                     self.random_movement(person, config)
                 self.update_infection_status(person, infected, recovered, config)
@@ -102,7 +98,6 @@ class Movement:
                         if person.is_central_hub == True:
                             disp_coordinates = self.get_displacement_coordinates(person, 50)
                             person.is_central_hub = False
-                            # x= random.choice([random.randint(100, 250), random.randint(-250, -100)])
 
                             y = random.choice([random.randint(-250, -30), random.randint(30, 250)])
 

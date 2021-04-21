@@ -16,7 +16,7 @@ class screen:
 
     def create_quarantine_location(self, draw_pen):
         self.set_default_config(draw_pen, "red", 5)
-        self.draw_square([-50, -370], 100, draw_pen)
+        self.draw_square([-50, -370], 50, draw_pen)
 
     def create_random_mov_screen(self,draw_pen):
         self.set_default_config(draw_pen)
