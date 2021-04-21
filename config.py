@@ -24,15 +24,15 @@ config['SARS-COV-1'] = {
         "daily_prob_decrease_sars": 0.95,
         "asymptomatic_probability": 0.3,
         "testing_probability": 0.5,
-        "contact_tracing_efficiency": 1,
+        "contact_tracing_efficiency": 0.75,
         # "quarantine_location_x_limit": [-50, 50],
         # "quarantine_location_y_limit": [-370, -330],
         "community_travel_probability": 0.08,
         "visit_hub_probability": 0.05,
         # "community_coordinates": [[-280, -100, 120, 300], [-80, 100, 120, 300], [120, 300, 120, 300], [-280, -100, -80, 100], [-80, 100, -80, 100], [120, 300, -80, 100], [-280, -100, -280, -100], [-80, 100, -280, -100], [120, 300, -280, -100]],
         # "sd_factor": 0.1,
-        "asymptotic_testing_probability": 0.4,
-        "quarantine_probability": 0,
+        "asymptotic_testing_probability": 0.5,
+        "quarantine_probability": 0.25,
         "incubation_period": 4
 }
 config['SARS-COV-2'] = {
@@ -58,15 +58,15 @@ config['SARS-COV-2'] = {
         "daily_prob_decrease_sars": 0.9,
         "asymptomatic_probability": 0.3,
         "testing_probability": 0.5,
-        "contact_tracing_efficiency": 1,
+        "contact_tracing_efficiency": 0.75,
         # "quarantine_location_x_limit": [-50, 50],
         # "quarantine_location_y_limit": [-370, -330],
         "community_travel_probability": 0.20,
         "visit_hub_probability": 0.1,
         # "community_coordinates": [[-280, -100, 120, 300], [-80, 100, 120, 300], [120, 300, 120, 300], [-280, -100, -80, 100], [-80, 100, -80, 100], [120, 300, -80, 100], [-280, -100, -280, -100], [-80, 100, -280, -100], [120, 300, -280, -100]],
         # "sd_factor": 0.1,
-        "asymptotic_testing_probability": 0.4,
-        "quarantine_probability": 0,
+        "asymptotic_testing_probability": 0.5,
+        "quarantine_probability": 0.25,
         "incubation_period": 6
 
 }
