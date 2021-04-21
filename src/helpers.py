@@ -1,5 +1,5 @@
 import random
-
+from src import  constants
 def calculate_R(time, population, susceptible, infected_dict, victim_dict, config, r_vals):
     if (time/config["time_conversion_factor"]) % 7 == 0 and len(susceptible.keys()) > 0:
         x = []
@@ -72,7 +72,7 @@ def get_population_status_counts(population):
             susceptible_count += 1
         else:
             recovered_count += 1
-    return  [susceptible_count, infected_count, recovered_count]
+    return [susceptible_count, infected_count, recovered_count]
 
 
 def filter_infectious(population, susceptible, infected):
@@ -184,7 +184,7 @@ def update_vaccination_and_mask_status(population, config ):
         if random.random() < config["vaccine_probability"]:
             # print("vaccine probabilit True")
             population[person_id].vaccination_status = True
-            population[person_id].vaccine_efficacy = random.choice(config["vaccine_efficacy_range"])
+            population[person_id].vaccine_efficacy = config[constants.vaccine_efficacy]
         if random.random() < config["mask_probability"]:
             # print("mask probability")
             population[person_id].mask_status = True
