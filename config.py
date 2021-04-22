@@ -46,8 +46,8 @@ config['SARS-COV-2'] = {
         "contact_tracing_efficiency": 0.5,
         "community_travel_probability": 0.05,
         "visit_hub_probability": 0.1,
-        "asymptotic_testing_probability": 0.5,
-        "quarantine_probability": 0.25,
+        "asymptotic_testing_probability": 0.3,
+        "quarantine_probability": 0.1,
         "incubation_period": 7
 
 }

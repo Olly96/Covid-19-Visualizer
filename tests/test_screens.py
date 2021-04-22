@@ -30,9 +30,9 @@ class TestStringMethods(unittest.TestCase):
         draw_pen = Mock()
         screens.set_default_config = Mock()
         screens.draw_square = Mock()
-        screens.create_quarantine_location([25, 35], 20, draw_pen)
+        screens.create_quarantine_location(draw_pen)
         screens.set_default_config.assert_called_once_with(draw_pen, "red", 5)
-        screens.draw_square.assert_called_once_with([25, 35], 20, draw_pen)
+        screens.draw_square.assert_called_once_with([-50, -370], 50, draw_pen)
 
     def test_create_random_mov_screen(self):
         screens = screen.screen()

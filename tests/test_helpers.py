@@ -115,7 +115,7 @@ class TestStringMethods(unittest.TestCase):
         config = {
             "vaccine_probability": 0.3,
             "mask_probability": 0.6,
-            "vaccine_efficacy_range": [0.64, 0.67, 0.94, 0.95]
+            "vaccine_efficacy": 0.94
         }
         population = {}
         person_obj_1 = Mock()
@@ -212,24 +212,6 @@ class TestStringMethods(unittest.TestCase):
         print(effective_probability)
         self.assertEqual(effective_probability, 0.15)
 
-    def test_get_infection_status(self):
-        config = {
-            "infection_distance": 5
-        }
-        infected_person = Mock()
-        infected_person.turtle = Mock()
-        infected_person.infection_probability = 0.6
-        infected_person.mask_status = False
-        susceptible_person = Mock()
-        susceptible_person.turtle = Mock()
-        susceptible_person.turtle.distance = Mock(return_value=3)
-        helpers.get_effective_probability = Mock(return_value=0.5)
-        randMock.random = Mock(return_value=0.6)
-        self.assertEqual(helpers.get_infection_status(infected_person, susceptible_person, config), False)
-        randMock.random = Mock(return_value=0.3)
-        self.assertEqual(helpers.get_infection_status(infected_person, susceptible_person, config), True)
-        susceptible_person.turtle.distance = Mock(return_value=8)
-        self.assertEqual(helpers.get_infection_status(infected_person, susceptible_person, config), False)
 
     def test_calculate_infections(self):
         config = {
