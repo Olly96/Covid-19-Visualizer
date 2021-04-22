@@ -61,7 +61,6 @@ class TestStringMethods(unittest.TestCase):
         infected.infected_time = 337
         helpers.update_probability_sars(infected, config)
         self.assertEqual(infected.infection_probability, 0.29924999999999996)
-        print(infected.infection_probability)
 
     def test_update_probability_covid(self):
         infected = Mock()
@@ -209,7 +208,6 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(effective_probability, 0.012)
 
         effective_probability = helpers.get_effective_probability(infected_person, susceptible_person, 1, config)
-        print(effective_probability)
         self.assertEqual(effective_probability, 0.15)
 
 

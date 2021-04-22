@@ -22,7 +22,6 @@ class TestStringMethods(unittest.TestCase):
         turtle_obj.xcor = MagicMock(return_value=150)
         turtle_obj.ycor = MagicMock(return_value=200)
         person_obj.turtle = turtle_obj
-        print(person_obj.turtle.xcor())
         person_obj.x_limit = [100, 500]
         person_obj.y_limit = [100, 500]
         self.assertEqual(mov.get_displacement_coordinates(person_obj, 10), [150, 200])
@@ -40,7 +39,6 @@ class TestStringMethods(unittest.TestCase):
             turtle_obj.xcor = MagicMock(return_value=499)
             turtle_obj.ycor = MagicMock(return_value=102)
             person_obj.turtle = turtle_obj
-            print(person_obj.turtle.xcor())
             person_obj.x_limit = [100, 500]
             person_obj.y_limit = [100, 500]
             self.assertEqual(mov.get_displacement_coordinates(person_obj, 10), [493.8, 106.5])
@@ -58,7 +56,6 @@ class TestStringMethods(unittest.TestCase):
         turtle_obj.xcor = MagicMock(return_value=102)
         turtle_obj.ycor = MagicMock(return_value=499)
         person_obj.turtle = turtle_obj
-        print(person_obj.turtle.xcor())
         person_obj.x_limit = [100, 500]
         person_obj.y_limit = [100, 500]
         self.assertEqual(mov.get_displacement_coordinates(person_obj, 10), [104.5, 495])
@@ -214,9 +211,7 @@ class TestStringMethods(unittest.TestCase):
             "quarantine_location_x_limit": [-300, -260],
             "quarantine_location_y_limit": [-250, -210]
         }
-        print("lol",infected,recovered)
         mov.update_infection_status(person_obj, infected, recovered, config)
-        print("lol",infected,recovered)
         self.assertEqual(infected, {})
         self.assertEqual(recovered, {23: True})
 
@@ -247,8 +242,6 @@ class TestStringMethods(unittest.TestCase):
         recovered = {}
         helperMock.update_probability_covid = Mock()
         mov.update_infection_status(person_obj_3, infected, recovered, config)
-        # helperMock.update_probability_covid.assert_called_once()
-        print(infected, recovered, person_obj_3)
 
     def test_simulate_movement_communities(self):
         mov = movement.Movement()

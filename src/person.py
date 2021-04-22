@@ -9,7 +9,6 @@ class Person:
         self.is_ever_infected = False
         self.infected_by = "None"
         self.is_quarantined = False
-        self.infected_timestamp = "None" #doubtful
         self.displacement_prob = 1
         self.is_moving = False
         self.x_limit = x_limit
@@ -18,12 +17,10 @@ class Person:
         self.is_moving_home = False
         self.x_dest = 0
         self.y_dest = 0
-        self.is_central_hub = False #doubtful
+        self.is_central_hub = False
         self.status = "S"
-        self.number_infected = 0 #doubtful
         self.infected_time = 0
         self.close_contacts = []
-        self.last_location = [] #doubtful
         self.particle_size = particle_size
         self.incubation_period = incubation_period
         self.infection_probability = 0

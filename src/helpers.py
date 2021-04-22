@@ -36,7 +36,6 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, confi
             else:
                 y.append(total_edges/total_infections)
             win_right += interval
-        # print([x, y])
         return [x, y]
     else:
         return r_vals
@@ -96,7 +95,6 @@ def trace_contacts(population, infected, contacts, config):
                         if contact.infected_time > contact.incubation_period * config["time_conversion_factor"]\
                                 or random.random() < config["quarantine_probability"]:
                             quarantine_person(contact, config)
-                    # del contacts[infected_person_id]
 
 
 def quarantine_person(person, config):

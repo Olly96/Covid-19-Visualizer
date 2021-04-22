@@ -1,4 +1,3 @@
-
 social_distancing = "sd_factor"
 population = "population_count"
 initial_infection_percentage = "initial_infection_percentage"

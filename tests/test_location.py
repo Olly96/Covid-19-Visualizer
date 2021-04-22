@@ -28,7 +28,6 @@ class TestStringMethods(unittest.TestCase):
                 "vaccine_efficacy": 96
             }
             pop = loc.spawn_people_communities(config, {})
-            print(pop)
             person_mock.Person.assert_any_call(0, [100, 200], [100, 200], 7,0.1, {})
             person_mock.Person.assert_any_call(1, [100, 200], [100, 200], 7,0.1,{})
             person_mock.Person.assert_any_call(2, [300, 400], [300, 400], 7, 0.1,{})

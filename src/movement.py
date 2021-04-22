@@ -77,7 +77,6 @@ class Movement:
                         person.y_limit = [dest_community[2], dest_community[3]]
                         person_turtle.goto(x_dest, y_dest)
                     else:
-                        # if person.status != "QI" or person.status != "QS":
                         self.random_movement(person, config)
 
                 self.update_infection_status(person, infected, recovered, config)
@@ -87,8 +86,6 @@ class Movement:
         for person_id in population:
             person = population[person_id]
             person_turtle = person.turtle
-            # if person.status == "I" or person.status == "S" or \
-            #     person.status == "R" or person.status == "AI":
             if not person.is_quarantined:
                 if(random.random() < config["visit_hub_probability"]):
 
