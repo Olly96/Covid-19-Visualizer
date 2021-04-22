@@ -19,6 +19,13 @@ If we update config.py then we need to riun
 
 python config.py (This will generate the new dev.ini file)
 
+To Run Unit tests and view coverage
+
+ coverage run -m --source src unittest discover (By line)
+coverage run -m --branch --source src unittest discover (Brnach Coverage)
+
+ coverage report -m
+
 Link for the video:
 
 https://web.microsoftstream.com/video/c2a9e751-75d0-4495-8b2c-fe4e78e5f184
