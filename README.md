@@ -15,16 +15,16 @@ Once the installation is done we open pipenv shell we consists our virtual envir
 pipenv shell
 python main.py
 
-If we update config.py then we need to riun
+If we update config.py then we need to run
 
 python config.py (This will generate the new dev.ini file)
 
 To Run Unit tests and view coverage
 
- coverage run -m --source src unittest discover (By line)
-coverage run -m --branch --source src unittest discover (Brnach Coverage)
+coverage run -m --source src unittest discover (By line)
+coverage run -m --branch --source src unittest discover (Branch Coverage)
 
- coverage report -m
+coverage report -m
 
 Link for the video:
 
