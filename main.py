@@ -231,11 +231,6 @@ def runSimulation():
     else:
         simulate_communities_movement(canvas, config)
 
-def control_changed(*val):
-    # run_simulation = False
-    # runSimulation(canvas)
-    print("hello world", *val)
-
 def start_button_clicked():
     global run_simulation
     run_simulation = False
@@ -268,29 +263,22 @@ def generate_ui_controls():
     UI_ELEMENTS_MAP[constants.contact_tracing_status] = optvar_3
 
     scale_social_distancing = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
-    scale_social_distancing.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.social_distancing] = scale_social_distancing
     scale_population = tk.Scale(orient='horizontal', from_=100, to=800)
     scale_population.set(200)
-    scale_population.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.population] = scale_population
     scale_init_inf_per = tk.Scale(orient='horizontal', from_=1, to=100)
     scale_init_inf_per.set(6)
-    scale_init_inf_per.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.initial_infection_percentage] = scale_init_inf_per
     scale_vacc_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.)
     scale_vacc_prob.set(0)
-    scale_vacc_prob.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.vaccine_probability] = scale_vacc_prob
     scale_vacc_eff = tk.Scale(orient='horizontal', from_=0.65, to=1, resolution=0.01)
-    scale_vacc_eff.bind("<ButtonRelease-1>", control_changed)
     UI_ELEMENTS_MAP[constants.vaccine_efficacy] = scale_vacc_eff
     scale_mask_prob = tk.Scale(orient='horizontal', from_=0, to=1, resolution=0.1)
-    scale_mask_prob.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.mask_probability] = scale_mask_prob
     scale_particle_size = tk.Scale(orient='horizontal', from_=0.05, to=0.3, resolution=0.05)
     scale_particle_size.set(0.15)
-    scale_particle_size.bind("<ButtonRelease-1>", control_changed())
     UI_ELEMENTS_MAP[constants.particle_size] = scale_particle_size
 
     # scale.place(x=40, y=70)

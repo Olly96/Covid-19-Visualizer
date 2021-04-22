@@ -36,7 +36,7 @@ def calculate_R(time, population, susceptible, infected_dict, victim_dict, confi
             else:
                 y.append(total_edges/total_infections)
             win_right += interval
-        print([x, y])
+        # print([x, y])
         return [x, y]
     else:
         return r_vals
