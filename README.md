@@ -18,3 +18,7 @@ python main.py
 If we update config.py then we need to riun
 
 python config.py (This will generate the new dev.ini file)
+
+Link for the video:
+
+https://web.microsoftstream.com/video/c2a9e751-75d0-4495-8b2c-fe4e78e5f184
