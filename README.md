@@ -12,6 +12,7 @@ pipenv --python 3.9
 pipenv install
 
 Once the installation is done we open pipenv shell we consists our virtual environment
+
 pipenv shell
 python main.py
 
