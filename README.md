@@ -18,7 +18,7 @@ python main.py
 
 If we update config.py then we need to run
 
-python config.py (This will generate the new dev.ini file)
+python config.py (This will generate the new dev.ini(configuration file))
 
 To Run Unit tests and view coverage
 
