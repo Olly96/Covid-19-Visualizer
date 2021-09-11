@@ -27,6 +27,5 @@ coverage run -m --branch --source src unittest discover (Branch Coverage)
 
 coverage report -m
 
-Link for the video:
 
-https://web.microsoftstream.com/video/c2a9e751-75d0-4495-8b2c-fe4e78e5f184
+
